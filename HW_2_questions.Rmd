@@ -20,3 +20,9 @@ left_join = (dataset1, dataset2, by = c("cahracter 1", "character 2"))
 
 
 cannot add tibble in a dataset ??? its gonna change the column name to ..xx
+
+knitr:: kable() cannot be used after a %>% , should be used in a single command. Same with geoplot+geom_point
+
+filter cannot work: because when specifying characters, it didnt match the format in dataset, eg. in dataset they are capital , then in filter they should also be capital
+
+The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median((pull(Mr_Trash_Wheel_data, sports_balls) )`. In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row. In combination_precipitation_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 

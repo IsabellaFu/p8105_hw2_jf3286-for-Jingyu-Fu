@@ -17,9 +17,9 @@ library(dplyr)
 
 ```
 
-#Problem 1
+# Problem 1
 
-##Read and clean the Mr. Trash Wheel sheet 
+## Read and clean the Mr. Trash Wheel sheet 
 ```{r}
 library(readxl)
 Mr_Trash_Wheel_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N408", col_names = TRUE) %>%
@@ -33,7 +33,7 @@ Mr_Trash_Wheel_data = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xl
 Mr_Trash_Wheel_data
 ```
     
-##Read and clean precipitation data for 2017 and 2018. 
+## Read and clean precipitation data for 2017 and 2018. 
 ```{r}
  precipitation_2017 = read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2017 Precipitation", skip = 1, col_names = TRUE) %>% 
     janitor::clean_names() %>% 
@@ -49,7 +49,7 @@ Mr_Trash_Wheel_data
  precipitation_2017
 ```
   
-##Next, combine precipitation datasets. 
+## Next, combine precipitation datasets. 
 ```{r} 
  combination_precipitation = full_join (precipitation_2017,precipitation_2018) %>% 
    mutate (
@@ -62,7 +62,18 @@ combination_precipitation
 
 ## Write a paragraph about these data.
 
-The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median((pull(Mr_Trash_Wheel_data, sports_balls) )`. In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row. In combination_precipitation_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 
+The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median(pull(filter(Mr_Trash_Wheel_data, year == 2017), sports_balls))`. 
+
+
+In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row.
+
+In combination_precipitation_data,there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 
+
+In precipitation_2017 data, there are `r nrow(precipitation_2017)`rows and `r ncol(precipitation_2017)`columns.The mean  is `r mean(pull(precipitation_2017, total))`.The key variable is month, because the month identifies each row.
+
+
+In the precipitation_2018 data, there are `r nrow(precipitation_2018)`rows and `r ncol(precipitation_2018)`columns. The mean is `r mean(pull(precipitation_2018, total))`.The key variable is month, because the month identifies each row.
+
  
 
 
@@ -88,7 +99,7 @@ snp = read_csv(file = "./data/fivethirtyeight_datasets/snp.csv") %>%
 janitor:: clean_names () %>% 
   separate (date, into = c( "month", "day","year"), convert=T) %>% 
   arrange (year, month) %>% 
-  select (year, month, everything ()) %>% 
+  select (year, month, everything (),-day) %>% 
   mutate(
     month = as.numeric (month), 
     month = month.name [month]
@@ -121,7 +132,7 @@ join_datasets
 
 ## Write a short paragraph about these datasets. 
 
-In pols-month.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(pols_month)` rows and `r ncol(pols_month)` columns, range of year is`r range(pull(pols_month,year))`, and the key variable is date, which identifies each row. In snp.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(snp)` rows and `r ncol(snp)` columns, range of year is`r range(pull(snp,year))`, and the key variables are year, month and day, which together identifies each row. In unemployment.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(unemployment)` rows and `r ncol(unemployment)` columns, range of year is`r range(pull(unemployment,year))`, and the key variables are year and month, which together identifies each row. 
+In pols-month.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(pols_month)` rows and `r ncol(pols_month)` columns, range of year is`r range(pull(pols_month,year))`, and the key variable is date, which identifies each row. In snp.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(snp)` rows and `r ncol(snp)` columns, range of year is`r range(pull(snp,year))`, and the key variables are year, month and day, which together identifies each row. In unemployment.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(unemployment)` rows and `r ncol(unemployment)` columns, range of year is`r range(pull(unemployment,year))`, and the key variables are year and month, which together identify each row. 
 
 
 # Problem 3
@@ -132,18 +143,18 @@ library(ggridges)
 library(dplyr)
 popular_baby_names = read_csv (file = "./data/Popular_Baby_Names.csv", col_names = TRUE, col_types = "ncccnn")%>%
   janitor::clean_names()%>%
-  dplyr:: distinct () 
+  distinct(.keep_all = TRUE)
 popular_baby_names
 ```
  
-## Produce a well-structured, reader-friendly table showing the rank in popularity of the name “Olivia” as a female baby name over time.
+## Produce a table showing the rank in popularity of the name “Olivia” as a female baby name over time.
 ```{r}
   popular_baby_names_1 = 
     select (popular_baby_names, - count)%>%
   filter (gender == "FEMALE" & childs_first_name == "Olivia")%>%
   pivot_wider(names_from = "year_of_birth", values_from = "rank")%>%
-  select (- gender, - childs_first_name)%>%
-  knitr::kable()
+  select (- gender, - childs_first_name)
+  knitr::kable(popular_baby_names_1)
 ```
 
 ## Produce a similar table showing the most popular name among male children over time.
@@ -153,15 +164,23 @@ popular_baby_names
   select (- count, - gender)%>%
   pivot_wider(names_from = "year_of_birth", values_from = "childs_first_name")%>%
    select (- rank) %>% 
-   drop_na() %>% 
- knitr::kable()
+   drop_na()
+ knitr::kable(popular_baby_names_2)
 ```
                                                                                     
-## Finally, for male, white non-hispanic children born in 2016, produce a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis)                                                                               
+## Finally, produce a scatter plot for male, white non-hispanic children born in 2016.                                                                               
 ```{r}
  ggplot_data = 
-   filter (popular_baby_names, gender == "male" & ethnicity != "hispanic" & year_of_birth == 2016) %>%
-   select (count, rank, childs_first_name) %>% 
-  ggplot(aes(x = childs_first_name, y = count)) + 
-    geom_point()
+   filter (popular_baby_names, gender == "MALE" & ethnicity == "WHITE NON HISPANIC" & year_of_birth == 2016) 
+
+  ggplot(ggplot_data, aes(x = rank, y = count)) + 
+    geom_point()+
+ labs(
+    title = "Name and rank plot  ",
+    x = "Rank in popularity of a name",
+    y = "Number of children with a name ",
+    caption = "Data for white non-hispanic male children born in 2016"
+  )
+  
+
 ```
