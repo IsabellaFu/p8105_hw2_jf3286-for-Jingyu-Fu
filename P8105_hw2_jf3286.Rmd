@@ -62,17 +62,7 @@ combination_precipitation
 
 ## Write a paragraph about these data.
 
-The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median(pull(filter(Mr_Trash_Wheel_data, year == 2017), sports_balls))`. 
-
-
-In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row.
-
-In combination_precipitation_data,there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 
-
-In precipitation_2017 data, there are `r nrow(precipitation_2017)`rows and `r ncol(precipitation_2017)`columns.The mean  is `r mean(pull(precipitation_2017, total))`.The key variable is month, because the month identifies each row.
-
-
-In the precipitation_2018 data, there are `r nrow(precipitation_2018)`rows and `r ncol(precipitation_2018)`columns. The mean is `r mean(pull(precipitation_2018, total))`.The key variable is month, because the month identifies each row.
+The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median(pull(filter(Mr_Trash_Wheel_data, year == 2017), sports_balls))`. In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row.In combination_precipitation_data,there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. In precipitation_2017 data, there are `r nrow(precipitation_2017)`rows and `r ncol(precipitation_2017)`columns.The mean  is `r mean(pull(precipitation_2017, total))`.The key variable is month, because the month identifies each row.In the precipitation_2018 data, there are `r nrow(precipitation_2018)`rows and `r ncol(precipitation_2018)`columns. The mean is `r mean(pull(precipitation_2018, total))`.The key variable is month, because the month identifies each row.
 
  
 
@@ -132,7 +122,7 @@ join_datasets
 
 ## Write a short paragraph about these datasets. 
 
-In pols-month.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(pols_month)` rows and `r ncol(pols_month)` columns, range of year is`r range(pull(pols_month,year))`, and the key variable is date, which identifies each row. In snp.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(snp)` rows and `r ncol(snp)` columns, range of year is`r range(pull(snp,year))`, and the key variables are year, month and day, which together identifies each row. In unemployment.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(unemployment)` rows and `r ncol(unemployment)` columns, range of year is`r range(pull(unemployment,year))`, and the key variables are year and month, which together identify each row. 
+In pols-month.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(pols_month)` rows and `r ncol(pols_month)` columns, range of year is(`r range(pull(pols_month,year))`), and the key variable is date, which identifies each row. In snp.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(snp)` rows and `r ncol(snp)` columns, range of year is(`r range(pull(snp,year))`), and the key variables are year, month and day, which together identifies each row. In unemployment.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(unemployment)` rows and `r ncol(unemployment)` columns, range of year is(`r range(pull(unemployment,year))`), and the key variables are year and month, which together identify each row. 
 
 
 # Problem 3
@@ -143,15 +133,25 @@ library(ggridges)
 library(dplyr)
 popular_baby_names = read_csv (file = "./data/Popular_Baby_Names.csv", col_names = TRUE, col_types = "ncccnn")%>%
   janitor::clean_names()%>%
-  distinct(.keep_all = TRUE)
+   mutate(
+    ethnicity = str_to_lower(ethnicity),
+    childs_first_name = str_to_lower(childs_first_name),
+    gender = str_to_lower(gender),
+    ethnicity = recode(ethnicity,
+                       "asian and paci" = "asian and pacific islander",
+                       "black non hisp" = "black non hispanic",
+                       "white non hisp" = "white non hispanic")
+    
+  )  %>% 
+distinct(.keep_all = TRUE)
 popular_baby_names
 ```
  
-## Produce a table showing the rank in popularity of the name “Olivia” as a female baby name over time.
+## Produce a table showing the rank in popularity of the name “olivia” as a female baby name over time.
 ```{r}
   popular_baby_names_1 = 
     select (popular_baby_names, - count)%>%
-  filter (gender == "FEMALE" & childs_first_name == "Olivia")%>%
+  filter (gender == "female" & childs_first_name == "olivia")%>%
   pivot_wider(names_from = "year_of_birth", values_from = "rank")%>%
   select (- gender, - childs_first_name)
   knitr::kable(popular_baby_names_1)
@@ -160,18 +160,17 @@ popular_baby_names
 ## Produce a similar table showing the most popular name among male children over time.
 ```{r}
  popular_baby_names_2 =
-  filter (popular_baby_names, gender %in% c ("MALE") & rank == 1 )%>%
+  filter (popular_baby_names, gender %in% c ("male") & rank == 1 )%>%
   select (- count, - gender)%>%
-  pivot_wider(names_from = "year_of_birth", values_from = "childs_first_name")%>%
-   select (- rank) %>% 
-   drop_na()
- knitr::kable(popular_baby_names_2)
+  pivot_wider(names_from = "year_of_birth", values_from = "childs_first_name") 
+ 
+  knitr::kable(popular_baby_names_2)
 ```
                                                                                     
 ## Finally, produce a scatter plot for male, white non-hispanic children born in 2016.                                                                               
 ```{r}
  ggplot_data = 
-   filter (popular_baby_names, gender == "MALE" & ethnicity == "WHITE NON HISPANIC" & year_of_birth == 2016) 
+   filter (popular_baby_names, gender =="male"& ethnicity == "white non hispanic" & year_of_birth == 2016) 
 
   ggplot(ggplot_data, aes(x = rank, y = count)) + 
     geom_point()+
