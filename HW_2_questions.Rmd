@@ -1,0 +1,22 @@
+---
+title: "HW 2 questions"
+author: "Jingyu Fu"
+date: "2019/10/3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+as.numeric ()cannot really mutate a char into num?
+
+mutate(
+    month =  as.numeric(month),
+    month = month.name[month]
+  ) 
+
+left_join = (dataset1, dataset2, by = c("cahracter 1", "character 2"))
+
+
+cannot add tibble in a dataset ??? its gonna change the column name to ..xx
