@@ -60,13 +60,13 @@ Mr_Trash_Wheel_data
 combination_precipitation
 ``` 
 
-##Write a paragraph about these data; you are encouraged to use inline R.
+## Write a paragraph about these data.
 
-The total precipitation in 2018 is `r sum(pull(precipitation_2018, total)`.The median number of sports balls in a dumpster in 2017 is `r median(filter(pull(Mr_Trash_Wheel_data, sports_balls), year == 2017))`. In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row. In combination_precipitation_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 
+The total precipitation in 2018 is `r sum(pull(precipitation_2018, total))`.The median number of sports balls in a dumpster in 2017 is `r median((pull(Mr_Trash_Wheel_data, sports_balls) )`. In Mr_Trash_Wheel_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is dumpster, which identifies each row. In combination_precipitation_data, there are `r nrow(Mr_Trash_Wheel_data)`rows and `r ncol(Mr_Trash_Wheel_data)`columns, and the key variable is month, which is the link between precipitation 2017 data and precipitation 2018 data. 
  
 
 
-#Problem 2
+# Problem 2
 
 ## First, clean the data in pols-month.csv.
 ```{r}
@@ -82,7 +82,7 @@ pols_month = read_csv(file = "./data/fivethirtyeight_datasets/pols-month.csv", c
 pols_month
 ```
  
-##Second, clean the data in snp.csv. 
+## Second, clean the data in snp.csv. 
 ```{r}
 snp = read_csv(file = "./data/fivethirtyeight_datasets/snp.csv") %>% 
 janitor:: clean_names () %>% 
@@ -98,7 +98,7 @@ snp
 ```
 
 
-##Third, tidy the unemployment data.  
+## Third, tidy the unemployment data.  
 ```{r}
 unemployment = read_csv(file = "./data/fivethirtyeight_datasets/unemployment.csv") %>% 
   pivot_longer (
@@ -111,7 +111,7 @@ unemployment
 ```
 
 
-##Join the datasets. 
+## Join the datasets. 
 ```{r}
 join_datasets = 
   left_join (pols_month, snp, by = c ("year","month")) %>% 
@@ -119,14 +119,14 @@ join_datasets =
 join_datasets
 ```
 
-##write a short paragraph about these datasets. 
+## Write a short paragraph about these datasets. 
 
 In pols-month.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(pols_month)` rows and `r ncol(pols_month)` columns, range of year is`r range(pull(pols_month,year))`, and the key variable is date, which identifies each row. In snp.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(snp)` rows and `r ncol(snp)` columns, range of year is`r range(pull(snp,year))`, and the key variables are year, month and day, which together identifies each row. In unemployment.csv , there contained the date, and corresponding information about president government. For its resulting dataset, there are `r nrow(unemployment)` rows and `r ncol(unemployment)` columns, range of year is`r range(pull(unemployment,year))`, and the key variables are year and month, which together identifies each row. 
 
 
-#Problem 3
+# Problem 3
 
-##Load and tidy the data.
+## Load and tidy the data.
 ```{r}
 library(ggridges)
 library(dplyr)
@@ -136,7 +136,7 @@ popular_baby_names = read_csv (file = "./data/Popular_Baby_Names.csv", col_names
 popular_baby_names
 ```
  
-##Produce a well-structured, reader-friendly table showing the rank in popularity of the name “Olivia” as a female baby name over time.
+## Produce a well-structured, reader-friendly table showing the rank in popularity of the name “Olivia” as a female baby name over time.
 ```{r}
   popular_baby_names_1 = 
     select (popular_baby_names, - count)%>%
@@ -146,7 +146,7 @@ popular_baby_names
   knitr::kable()
 ```
 
-##Produce a similar table showing the most popular name among male children over time.
+## Produce a similar table showing the most popular name among male children over time.
 ```{r}
  popular_baby_names_2 =
   filter (popular_baby_names, gender %in% c ("MALE") & rank == 1 )%>%
